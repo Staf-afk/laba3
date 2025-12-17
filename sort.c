@@ -4,7 +4,7 @@
 #include <time.h>
 
 void insertionSortStack(Stack* stack){
-    if (isEmpty(stack) || stack->size == 1){
+    if (isEmpty(stack) || getStackSize(stack) == 1){
         return;
     }
     Stack* sorted = initStack();
@@ -14,20 +14,51 @@ void insertionSortStack(Stack* stack){
         
         while (!isEmpty(sorted) && peek(sorted) > current){
             push(stack, pop(sorted));
-        }    
+        }
+        
         push(sorted, current);
     }
+    
     while (!isEmpty(sorted)){
         push(stack, pop(sorted));
     }
+    
     freeStack(sorted);
 }
 
+static Stack* mergeStacks(Stack* left, Stack* right) {
+    Stack* result = initStack();
+    Stack* temp = initStack();
+    
+    while (!isEmpty(left) && !isEmpty(right)) {
+        if (peek(left) <= peek(right)) {
+            push(temp, pop(left));
+        } else {
+            push(temp, pop(right));
+        }
+    }
+    
+    while (!isEmpty(left)) {
+        push(temp, pop(left));
+    }
+    while (!isEmpty(right)) {
+        push(temp, pop(right));
+    }
+    
+    while (!isEmpty(temp)) {
+        push(result, pop(temp));
+    }
+    
+    freeStack(temp);
+    return result;
+}
+
 Stack* mergeSortStack(Stack* stack){
-    if (isEmpty(stack) || stack->size == 1){
+    if (isEmpty(stack) || getStackSize(stack) == 1){
         return copyStack(stack);
     }
-    int mid = stack->size / 2;
+
+    int mid = getStackSize(stack) / 2;
     Stack* left = initStack();
     Stack* right = initStack();
     
@@ -40,32 +71,12 @@ Stack* mergeSortStack(Stack* stack){
     
     Stack* sortedLeft = mergeSortStack(left);
     Stack* sortedRight = mergeSortStack(right);
-    Stack* result = initStack();
-    Stack* temp = initStack();
-    
-    while (!isEmpty(sortedLeft) && !isEmpty(sortedRight)){
-        if (peek(sortedLeft) <= peek(sortedRight)){
-            push(temp, pop(sortedLeft));
-        } else{
-            push(temp, pop(sortedRight));
-        }
-    }
-    
-    while (!isEmpty(sortedLeft)){
-        push(temp, pop(sortedLeft));
-    }
-    while (!isEmpty(sortedRight)){
-        push(temp, pop(sortedRight));
-    }
-    while (!isEmpty(temp)){
-        push(result, pop(temp));
-    }
+    Stack* result = mergeStacks(sortedLeft, sortedRight);
     
     freeStack(left);
     freeStack(right);
     freeStack(sortedLeft);
     freeStack(sortedRight);
-    freeStack(temp);
     return result;
 }
 
@@ -112,13 +123,14 @@ void runStackPerformanceTests(){
     printf("Размер\tВставка\t\tСлияние\t\tРазница\n");
     printf("------\t--------\t--------\t--------\n");
     
-    int sizes[] = {100, 500, 1000, 5000, 10000, 50000, 100000};
+    int sizes[] = {100, 500, 1000, 5000, 10000};
     int numTests = sizeof(sizes) / sizeof(sizes[0]);
+    srand(time(NULL));
+    
     for (int i = 0; i < numTests; i++){
         int size = sizes[i];
         
         Stack* stack = initStack();
-        srand(time(NULL) + i);
         
         for (int j = 0; j < size; j++) {
             push(stack, rand() % 10000);
