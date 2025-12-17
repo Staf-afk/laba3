@@ -14,49 +14,43 @@ void clearInputBuffer(){
 }
 
 void printMenu() {
-    printf("\n=== Меню ===\n");
-    printf("1. Ввести последовательность чисел\n");
-    printf("2. Показать текущий стек\n");
-    printf("3. Сортировать прямым включением\n");
-    printf("4. Сортировать слиянием\n");
-    printf("5. Сравнить методы сортировки\n");
-    printf("6. Запустить тесты производительности\n");
-    printf("7. Прочитать из файла\n");
-    printf("8. Выход\n");
-    printf("Выберите опцию: ");
+    printf("\n=== Меню ===\n"
+        "1. Ввести последовательность чисел\n"
+        "2. Показать текущий стек\n"
+        "3. Сортировать прямым включением\n"
+        "4. Сортировать слиянием\n"
+        "5. Сравнить методы сортировки\n"
+        "6. Запустить тесты производительности\n"
+        "7. Прочитать из файла\n"
+        "8. Выход\n"
+        "Выберите опцию: ");
 }
 
 void processInput(Stack** stack){
     printf("Введите последовательность чисел через пробел: ");
     char input[10000];
-    
     clearInputBuffer();
     fgets(input, sizeof(input), stdin);
-    
     if (*stack != NULL) {
         freeStack(*stack);
     }
-    
     *stack = initStack();
     char* token = strtok(input, " \t\n");
     int count = 0;
     
     while (token != NULL) {
         int valid = 1;
-        
         for (int i = 0; token[i] != '\0'; i++) {
             if (!isdigit(token[i]) && !(i == 0 && token[i] == '-')) {
                 valid = 0;
                 break;
             }
         }
-        
         if (valid) {
             int num = atoi(token);
             push(*stack, num);
             count++;
         }
-        
         token = strtok(NULL, " \t\n");
     }
     
@@ -81,13 +75,11 @@ void sortWithInsertion(Stack* stack){
     
     printf("Исходный стек: ");
     printStack(stack);
-    
     Stack* copy = copyStack(stack);
     insertionSortStack(copy);
     
     printf("Отсортированный стек (прямое включение): ");
     printStack(copy);
-    
     appendStackToFile(copy, FILENAME, "Сортировка прямым включением");
     printf("Отсортированный ряд записан в файл '%s'\n", FILENAME);
     
@@ -99,15 +91,11 @@ void sortWithMerge(Stack* stack){
         printf("Стек пуст! Сначала введите числа.\n");
         return;
     }
-    
     printf("Исходный стек: ");
     printStack(stack);
-    
     Stack* sorted = mergeSortStack(stack);
-    
     printf("Отсортированный стек (слияние): ");
     printStack(sorted);
-    
     appendStackToFile(sorted, FILENAME, "Сортировка слиянием");
     printf("Отсортированный ряд записан в файл '%s'\n", FILENAME);
     
@@ -116,11 +104,12 @@ void sortWithMerge(Stack* stack){
 
 void readFromFile(){
     Stack* stack = readStackFromFile(FILENAME);
-    if (stack != NULL){
+    if(stack != NULL){
         printf("Прочитано из файла '%s':\n", FILENAME);
         printStack(stack);
         freeStack(stack);
-    } else {
+    } 
+    else{
         printf("Файл '%s' не найден или пуст\n", FILENAME);
     }
 }
@@ -128,11 +117,10 @@ void readFromFile(){
 int main(){
     Stack* stack = NULL;
     int choice;
-    
     printf("=== Программа сортировки последовательностей ===\n");
     printf("Используемые методы: прямое включение и слияние\n");
     
-    while (1) {
+    while(1){
         printMenu();
         
         if (scanf("%d", &choice) != 1) {
