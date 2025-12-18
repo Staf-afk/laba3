@@ -6,14 +6,14 @@
 #include <string.h>
 #include <ctype.h>
 
-#define FILENAME "numbers.txt"
+#define DEFAULT_FILENAME "numbers.txt"
 
 void clearInputBuffer(){
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
 
-void printMenu() {
+void printMenu(){
     printf("\n=== Меню ===\n"
         "1. Ввести последовательность чисел\n"
         "2. Показать текущий стек\n"
@@ -26,22 +26,22 @@ void printMenu() {
         "Выберите опцию: ");
 }
 
-void processInput(Stack** stack){
+void processInput(Stack** stack, const char* filename){
     printf("Введите последовательность чисел через пробел: ");
     char input[10000];
     clearInputBuffer();
     fgets(input, sizeof(input), stdin);
-    if (*stack != NULL) {
+    if (*stack != NULL){
         freeStack(*stack);
     }
     *stack = initStack();
     char* token = strtok(input, " \t\n");
     int count = 0;
     
-    while (token != NULL) {
+    while (token != NULL){
         int valid = 1;
-        for (int i = 0; token[i] != '\0'; i++) {
-            if (!isdigit(token[i]) && !(i == 0 && token[i] == '-')) {
+        for (int i = 0; token[i] != '\0'; i++){
+            if (!isdigit(token[i]) && !(i == 0 && token[i] == '-')){
                 valid = 0;
                 break;
             }
@@ -62,12 +62,12 @@ void processInput(Stack** stack){
     else{
         printf("Введено %d чисел\n", count);
         
-        writeStackToFile(*stack, FILENAME);
-        printf("Исходный ряд записан в файл '%s'\n", FILENAME);
+        writeStackToFile(*stack, filename);
+        printf("Исходный ряд записан в файл '%s'\n", filename);
     }
 }
 
-void sortWithInsertion(Stack* stack){
+void sortWithInsertion(Stack* stack, const char* filename){
     if (stack == NULL || isEmpty(stack)){
         printf("Стек пуст! Сначала введите числа.\n");
         return;
@@ -80,13 +80,13 @@ void sortWithInsertion(Stack* stack){
     
     printf("Отсортированный стек (прямое включение): ");
     printStack(copy);
-    appendStackToFile(copy, FILENAME, "Сортировка прямым включением");
-    printf("Отсортированный ряд записан в файл '%s'\n", FILENAME);
+    appendStackToFile(copy, filename, "Сортировка прямым включением");
+    printf("Отсортированный ряд записан в файл '%s'\n", filename);
     
     freeStack(copy);
 }
 
-void sortWithMerge(Stack* stack){
+void sortWithMerge(Stack* stack, const char* filename){
     if (stack == NULL || isEmpty(stack)){
         printf("Стек пуст! Сначала введите числа.\n");
         return;
@@ -96,29 +96,65 @@ void sortWithMerge(Stack* stack){
     Stack* sorted = mergeSortStack(stack);
     printf("Отсортированный стек (слияние): ");
     printStack(sorted);
-    appendStackToFile(sorted, FILENAME, "Сортировка слиянием");
-    printf("Отсортированный ряд записан в файл '%s'\n", FILENAME);
+    appendStackToFile(sorted, filename, "Сортировка слиянием");
+    printf("Отсортированный ряд записан в файл '%s'\n", filename);
     
     freeStack(sorted);
 }
 
-void readFromFile(){
-    Stack* stack = readStackFromFile(FILENAME);
+void readFromFile(const char* filename){
+    Stack* stack = readStackFromFile(filename);
     if(stack != NULL){
-        printf("Прочитано из файла '%s':\n", FILENAME);
+        printf("Прочитано из файла '%s':\n", filename);
         printStack(stack);
         freeStack(stack);
     } 
     else{
-        printf("Файл '%s' не найден или пуст\n", FILENAME);
+        printf("Файл '%s' не найден или пуст\n", filename);
     }
 }
+void processFileArgument(const char* filename) {
+    printf("=== Чтение данных из файла '%s' ===\n", filename);
+    
+    Stack* original = readStackFromFile(filename);
+    if (original == NULL) {
+        printf("Не удалось прочитать исходный ряд из файла.\n");
+        return;
+    }
+    printf("Предыдущий введенный ряд: ");
+    printStack(original);
+    
+    Stack* copy = copyStack(original);
+    insertionSortStack(copy);
+    printf("Отсортированный ряд (прямое включение): ");
+    printStack(copy);
+    freeStack(original);
+    freeStack(copy);
+}
 
-int main(){
+int main(int argc, char* argv[]){
     Stack* stack = NULL;
     int choice;
+    char* filename = DEFAULT_FILENAME;
+    
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            if (strcmp(argv[i], "--file") == 0 && i + 1 < argc) {
+                filename = argv[i + 1];
+                printf("Используется файл: %s\n", filename);
+                
+                if (argc == 3) {
+                    processFileArgument(filename);
+                    return 0;
+                }
+                i++; 
+            }
+        }
+    }
+    
     printf("=== Программа сортировки последовательностей ===\n");
     printf("Используемые методы: прямое включение и слияние\n");
+    printf("Рабочий файл: %s\n", filename);
     
     while(1){
         printMenu();
@@ -131,7 +167,7 @@ int main(){
         
         switch(choice){
             case 1:
-                processInput(&stack);
+                processInput(&stack, filename);
                 break;
                 
             case 2:
@@ -144,11 +180,11 @@ int main(){
                 break;
                 
             case 3:
-                sortWithInsertion(stack);
+                sortWithInsertion(stack, filename);
                 break;
                 
             case 4:
-                sortWithMerge(stack);
+                sortWithMerge(stack, filename);
                 break;
                 
             case 5:
@@ -165,7 +201,7 @@ int main(){
                 break;
                 
             case 7:
-                readFromFile();
+                readFromFile(filename);
                 break;
                 
             case 8:
