@@ -9,7 +9,6 @@ void insertionSortStack(Stack* stack){
         return;
     }
     Stack* sorted = initStack();
-    
     while (!isEmpty(stack)){
         int current = pop(stack);
         
@@ -19,7 +18,6 @@ void insertionSortStack(Stack* stack){
         
         push(sorted, current);
     }
-    
     while (!isEmpty(sorted)){
         push(stack, pop(sorted));
     }
@@ -31,21 +29,20 @@ static Stack* mergeStacks(Stack* left, Stack* right) {
     Stack* result = initStack();
     Stack* temp = initStack();
     
-    while (!isEmpty(left) && !isEmpty(right)) {
-        if (peek(left) <= peek(right)) {
+    while (!isEmpty(left) && !isEmpty(right)){
+        if (peek(left) <= peek(right)){
             push(temp, pop(left));
-        } else {
+        }
+        else{
             push(temp, pop(right));
         }
     }
-    
     while (!isEmpty(left)) {
         push(temp, pop(left));
     }
     while (!isEmpty(right)) {
         push(temp, pop(right));
     }
-    
     while (!isEmpty(temp)) {
         push(result, pop(temp));
     }
@@ -58,18 +55,15 @@ Stack* mergeSortStack(Stack* stack){
     if (isEmpty(stack) || getStackSize(stack) == 1){
         return copyStack(stack);
     }
-
     int mid = getStackSize(stack) / 2;
     Stack* left = initStack();
     Stack* right = initStack();
-    
     for (int i = 0; i < mid; i++){
         push(left, pop(stack));
     }
     while (!isEmpty(stack)){
         push(right, pop(stack));
     }
-    
     Stack* sortedLeft = mergeSortStack(left);
     Stack* sortedRight = mergeSortStack(right);
     Stack* result = mergeStacks(sortedLeft, sortedRight);
@@ -81,7 +75,7 @@ Stack* mergeSortStack(Stack* stack){
     return result;
 }
 
-void compareStackSortingMethods(Stack* stack) {
+void compareStackSortingMethods(Stack* stack){
     if (isEmpty(stack)) {
         printf("Стек пуст! Сначала введите числа.\n");
         return;

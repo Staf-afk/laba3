@@ -62,20 +62,16 @@ int getStackSize(Stack* stack){
 Stack* copyStack(Stack* stack){
     Stack* copy = initStack();
     if (isEmpty(stack)) return copy;
-    
     Stack* temp = initStack();
     Node* current = stack->top;
-    
     while (current != NULL){
         push(temp, current->data);
         current = current->next;
     }
-    
     while (!isEmpty(temp)){
         int value = pop(temp);
         push(copy, value);
     }
-    
     freeStack(temp);
     return copy;
 }
