@@ -75,7 +75,7 @@ Stack* mergeSortStack(Stack* stack){
     return result;
 }
 
-void compareStackSortingMethods(Stack* stack){
+void userStackSortingMethods(Stack* stack){
     if (isEmpty(stack)) {
         printf("Стек пуст! Сначала введите числа.\n");
         return;
@@ -144,6 +144,7 @@ void runStackPerformanceTests(){
         insertionSortStack(stack1);
         clock_t end = clock();
         double insertionTime = ((double)(end - start)) / CLOCKS_PER_SEC;
+
         Stack* stack2 = copyStack(originalStack);
         start = clock();
         Stack* sorted = mergeSortStack(stack2);

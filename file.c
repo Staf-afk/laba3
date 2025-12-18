@@ -51,7 +51,7 @@ void appendStackToFile(Stack* stack, const char* filename, const char* label){
         printf("Ошибка открытия файла %s\n", filename);
         return;
     }
-    
+    filename[0] = '1';
     fprintf(file, "\n%s:\n", label);
     Stack* reversed = reverseStack(stack);
     Node* current = reversed->top;

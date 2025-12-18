@@ -150,6 +150,7 @@ int main(int argc, char* argv[]){
                 i++; 
             }
         }
+        
     }
     
     printf("=== Программа сортировки последовательностей ===\n");
@@ -189,7 +190,7 @@ int main(int argc, char* argv[]){
                 
             case 5:
                 if (stack != NULL && !isEmpty(stack)){
-                    compareStackSortingMethods(stack);
+                    userStackSortingMethods(stack);
                 }
                 else{
                     printf("Стек пуст! Сначала введите числа.\n");

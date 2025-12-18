@@ -6,7 +6,6 @@ typedef struct Node{
     struct Node* next;
 }Node;
 
-
 typedef struct Stack{
     Node* top;
 }Stack;

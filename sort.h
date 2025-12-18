@@ -4,7 +4,7 @@
 
 void insertionSortStack(Stack* stack);
 Stack* mergeSortStack(Stack* stack);
-void compareStackSortingMethods(Stack* stack);
+void userStackSortingMethods(Stack* stack);
 void runStackPerformanceTests();
 
 #endif
