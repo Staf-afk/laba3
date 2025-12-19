@@ -1,8 +1,7 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O2
 TARGET = sort_program
 SOURCES = main.c stack.c sort.c file.c
-OBJECTS = $(SOURCES:.c=.o)
+OBJECTS = main.o stack.o sort.o file.o
 HEADERS = stack.h sort.h file.h
 
 all: $(TARGET)
